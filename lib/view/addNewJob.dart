@@ -69,7 +69,11 @@ class AddNewJob extends StatelessWidget {
                             FontWeight.normal,
                           ),
                         ),
-                        formField(""),
+                        formField(
+                          "",
+                          false,
+                          TextInputType.name,
+                        ),
                         SizedBox(
                           height: 25.h,
                         ),
@@ -81,7 +85,11 @@ class AddNewJob extends StatelessWidget {
                             FontWeight.normal,
                           ),
                         ),
-                        formField(""),
+                        formField(
+                          "",
+                          false,
+                          TextInputType.name,
+                        ),
                         SizedBox(
                           height: 25.h,
                         ),
@@ -96,7 +104,11 @@ class AddNewJob extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: formField(""),
+                              child: formField(
+                                "",
+                                false,
+                                TextInputType.number,
+                              ),
                             ),
                             SizedBox(
                               width: 50.w,
@@ -107,7 +119,11 @@ class AddNewJob extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: formField(""),
+                              child: formField(
+                                "",
+                                false,
+                                TextInputType.number,
+                              ),
                             )
                           ],
                         ),
@@ -125,7 +141,11 @@ class AddNewJob extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: formField(""),
+                              child: formField(
+                                "",
+                                false,
+                                TextInputType.number,
+                              ),
                             ),
                             SizedBox(
                               width: 50.w,
@@ -136,7 +156,11 @@ class AddNewJob extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: formField(""),
+                              child: formField(
+                                "",
+                                false,
+                                TextInputType.number,
+                              ),
                             )
                           ],
                         ),
@@ -207,6 +231,8 @@ class AddNewJob extends StatelessWidget {
                         ),
                         formField(
                           "Separete by coma",
+                          false,
+                          TextInputType.name,
                         ),
                         SizedBox(
                           height: 25.h,

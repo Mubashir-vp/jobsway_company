@@ -34,18 +34,24 @@ textStyle(var color, var size, var weight,
 }
 
 formField(
-  var hint, {
+  var hint, 
+   var obsecure,
+  var keyboardtype,{
   var suffix,
   var width,
   var height,
   padding,
   var controller,
   var validator,
+ 
 }) {
   return SizedBox(
     width: width,
     height: height,
-    child: TextFormField(
+    child: TextFormField
+    (
+      keyboardType:keyboardtype ,
+      obscureText: obsecure,
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
@@ -154,6 +160,9 @@ growableLongCard() {
     children: [
       formField(
         "",
+        false,
+                TextInputType.name,
+
         width: 200.w,
       ),
       SizedBox(
@@ -168,6 +177,8 @@ growableSkillCard() {
     children: [
       formField(
         "",
+        false,
+        TextInputType.name,
         width: 120.w,
       ),
       SizedBox(
@@ -1388,6 +1399,9 @@ growableTaskCard() {
     children: [
       formField(
         "",
+        false,
+                TextInputType.name,
+
         width: 400.w,
       ),
       SizedBox(

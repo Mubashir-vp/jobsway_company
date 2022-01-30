@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jobswaycompany/controller/login_controller.dart';
 import 'package:jobswaycompany/view/applicants.dart';
 import 'package:jobswaycompany/view/dashboard.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jobswaycompany/constants/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jobswaycompany/view/jobs.dart';
+import 'package:jobswaycompany/view/loginPage.dart';
 import 'package:jobswaycompany/view/profile.dart';
 import 'package:jobswaycompany/view/shortList.dart';
 import 'package:get/get.dart';
@@ -17,6 +19,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  var logincontroller = Get.put(LoginController());
   int currentIndex = 0;
   List<Widget> pages = [
     const Dashboard(),
@@ -117,7 +120,7 @@ class _LandingPageState extends State<LandingPage> {
                   Text(
                     "Dashboard",
                     style: textStyle(
-                    currentIndex==0?primaryGreen:  textBlack,
+                      currentIndex == 0 ? primaryGreen : textBlack,
                       23.sp,
                       currentIndex == 0 ? FontWeight.w600 : FontWeight.normal,
                     ),
@@ -150,7 +153,7 @@ class _LandingPageState extends State<LandingPage> {
                   Text(
                     "Jobs",
                     style: textStyle(
-                    currentIndex==1?primaryGreen:  textBlack,
+                      currentIndex == 1 ? primaryGreen : textBlack,
                       23.sp,
                       currentIndex == 1 ? FontWeight.w600 : FontWeight.normal,
                     ),
@@ -183,7 +186,7 @@ class _LandingPageState extends State<LandingPage> {
                   Text(
                     "Applicants",
                     style: textStyle(
-                    currentIndex==2?primaryGreen:  textBlack,
+                      currentIndex == 2 ? primaryGreen : textBlack,
                       23.sp,
                       currentIndex == 2 ? FontWeight.w600 : FontWeight.normal,
                     ),
@@ -216,7 +219,7 @@ class _LandingPageState extends State<LandingPage> {
                   Text(
                     "Shortlist",
                     style: textStyle(
-                    currentIndex==3?primaryGreen:  textBlack,
+                      currentIndex == 3 ? primaryGreen : textBlack,
                       23.sp,
                       currentIndex == 3 ? FontWeight.w600 : FontWeight.normal,
                     ),
@@ -249,7 +252,7 @@ class _LandingPageState extends State<LandingPage> {
                   Text(
                     "Profile",
                     style: textStyle(
-                    currentIndex==4?primaryGreen:  textBlack,
+                      currentIndex == 4 ? primaryGreen : textBlack,
                       23.sp,
                       currentIndex == 4 ? FontWeight.w600 : FontWeight.normal,
                     ),
@@ -261,6 +264,10 @@ class _LandingPageState extends State<LandingPage> {
               height: 30.h,
             ),
             GestureDetector(
+              onTap: ()async {
+               await logincontroller.falseFunction();
+                Get.off(() => const LoginPage());
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

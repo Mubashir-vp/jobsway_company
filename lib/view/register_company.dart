@@ -1,13 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jobswaycompany/api_services/api.dart';
 import 'package:jobswaycompany/constants/constants.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import 'package:jobswaycompany/controller/login_controller.dart';
 import 'package:jobswaycompany/controller/registercompany_controller.dart';
-import 'package:jobswaycompany/view/registerResult.dart';
 import 'package:email_validator/email_validator.dart';
+import 'dart:convert';
+
+import 'registerResult.dart';
 
 class RegisterCompany extends StatelessWidget {
   const RegisterCompany({Key? key}) : super(key: key);
@@ -15,7 +20,8 @@ class RegisterCompany extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formkey = GlobalKey<FormState>();
-
+    ApiServices apiServices = ApiServices();
+    bool loading = false;
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -75,6 +81,8 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                               child: formField(
                                 "Company Name",
+                                false,
+                                TextInputType.name,
                                 controller: controller.companynameController,
                                 validator: (val) {
                                   if (val == "") {
@@ -83,7 +91,7 @@ class RegisterCompany extends StatelessWidget {
                                   if (val.length < 4) {
                                     return "Minium 4 characters required";
                                   }
-                                  if (val.length > 8) {
+                                  if (val.length > 18) {
                                     return "Maximum 8 characters allowed";
                                   }
                                 },
@@ -95,6 +103,8 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                                 child: formField(
                               "Indutsrie",
+                              false,
+                              TextInputType.name,
                               validator: (val) {
                                 if (val == "") {
                                   return "This field is required";
@@ -115,6 +125,8 @@ class RegisterCompany extends StatelessWidget {
                         ),
                         formField(
                           "Location",
+                          false,
+                          TextInputType.streetAddress,
                           validator: (val) {
                             if (val == "") {
                               return "This field is required";
@@ -136,6 +148,8 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                                 child: formField(
                               "Email",
+                              false,
+                              TextInputType.emailAddress,
                               validator: (value) =>
                                   EmailValidator.validate(value)
                                       ? null
@@ -148,6 +162,8 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                                 child: formField(
                               "Phone",
+                              false,
+                              TextInputType.phone,
                               validator: (val) {
                                 if (val == "") {
                                   return "This field is required";
@@ -165,9 +181,14 @@ class RegisterCompany extends StatelessWidget {
                         ),
                         formField(
                           "About Your Company...",
+                          false,
+                          TextInputType.name,
                           validator: (val) {
                             if (val == "") {
                               return "This field is required";
+                            }
+                            if (val.length < 21) {
+                              return "Length minimum 20 required";
                             }
                           },
                           controller: controller.aboutController,
@@ -180,36 +201,50 @@ class RegisterCompany extends StatelessWidget {
                           height: 25.h,
                         ),
                         Center(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.photo_album,
-                                  color: primaryGreen,
+                          child: GestureDetector(
+                            onTap: () async {
+                              await controller.profilePicker();
+                              if (controller.file != null) {
+                                controller.cropImage();
+                              }
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: controller.path == null
+                                  ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.photo_album,
+                                          color: primaryGreen,
+                                        ),
+                                        SizedBox(
+                                          height: 10.h,
+                                        ),
+                                        Text(
+                                          "Add A Logo",
+                                          style: textStyle(
+                                            fullBlack,
+                                            15.sp,
+                                            FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Image.file(
+                                      controller.file!,
+                                      fit: BoxFit.cover,
+                                    ),
+                              height: 180.h,
+                              width: 180.w,
+                              decoration: BoxDecoration(
+                                color: HexColor(
+                                  "#E5E4E4",
                                 ),
-                                SizedBox(
-                                  height: 10.h,
+                                borderRadius: BorderRadius.circular(
+                                  8.r,
                                 ),
-                                Text(
-                                  "Add A Logo",
-                                  style: textStyle(
-                                    fullBlack,
-                                    15.sp,
-                                    FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            height: 100.h,
-                            width: 180.w,
-                            decoration: BoxDecoration(
-                              color: HexColor(
-                                "#E5E4E4",
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                8.r,
                               ),
                             ),
                           ),
@@ -244,15 +279,15 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                               child: formField(
                                 "WebSite",
+                                false,
+                                TextInputType.url,
                                 validator: (val) {
-                                  if (val == "") {
-                                    return "This field is required";
-                                  }
-                                  if (val.length < 4) {
-                                    return "Minium 4 characters required";
-                                  }
-                                  if (val.length > 8) {
-                                    return "Maximum 8 characters allowed";
+                                  bool _validURL = Uri.parse(val).isAbsolute;
+
+                                  if (val != "") {
+                                    if (_validURL != true) {
+                                      return "Enter a correct URL";
+                                    }
                                   }
                                 },
                                 controller: controller.webSiteController,
@@ -268,15 +303,15 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                                 child: formField(
                               "LinkedIn",
+                              false,
+                              TextInputType.url,
                               validator: (val) {
-                                if (val == "") {
-                                  return "This field is required";
-                                }
-                                if (val.length < 4) {
-                                  return "Minium 4 characters required";
-                                }
-                                if (val.length > 8) {
-                                  return "Maximum 8 characters allowed";
+                                bool _validURL = Uri.parse(val).isAbsolute;
+
+                                if (val != "") {
+                                  if (_validURL != true) {
+                                    return "Enter a correct URL";
+                                  }
                                 }
                               },
                               controller: controller.linkedInController,
@@ -295,15 +330,15 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                                 child: formField(
                               "Facebook",
+                              false,
+                              TextInputType.url,
                               validator: (val) {
-                                if (val == "") {
-                                  return "This field is required";
-                                }
-                                if (val.length < 4) {
-                                  return "Minium 4 characters required";
-                                }
-                                if (val.length > 8) {
-                                  return "Maximum 8 characters allowed";
+                                bool _validURL = Uri.parse(val).isAbsolute;
+
+                                if (val != "") {
+                                  if (_validURL != true) {
+                                    return "Enter a correct URL";
+                                  }
                                 }
                               },
                               controller: controller.facebookController,
@@ -318,15 +353,14 @@ class RegisterCompany extends StatelessWidget {
                             Expanded(
                                 child: formField(
                               "Instagram",
+                              false,
+                              TextInputType.url,
                               validator: (val) {
-                                if (val == "") {
-                                  return "This field is required";
-                                }
-                                if (val.length < 4) {
-                                  return "Minium 4 characters required";
-                                }
-                                if (val.length > 8) {
-                                  return "Maximum 8 characters allowed";
+                                bool _validURL = Uri.parse(val).isAbsolute;
+                                if (val != "") {
+                                  if (_validURL != true) {
+                                    return "Enter a correct URL";
+                                  }
                                 }
                               },
                               controller: controller.instagramController,
@@ -348,8 +382,28 @@ class RegisterCompany extends StatelessWidget {
                             FontWeight.w700,
                           ),
                         ),
+                        formField("Create Password", controller.eyesOpen,
+                            TextInputType.number, validator: (val) {
+                          if (val == "") {
+                            return "This field is required";
+                          }
+                          if (val.length < 4) {
+                            return "Minium 4 characters required";
+                          }
+                          if (val.length > 10) {
+                            return "Maximum 8 characters allowed";
+                          }
+                        },
+                            controller: controller.passwordController,
+                            suffix: controller.eye()),
+                        SizedBox(
+                          height: 25.h,
+                        ),
                         formField(
-                          "Create Password",
+                          "Confirm Password",
+                          controller.eyesOpen,
+                          TextInputType.number,
+                          controller: controller.confirmPasswordController,
                           validator: (val) {
                             if (val == "") {
                               return "This field is required";
@@ -357,39 +411,14 @@ class RegisterCompany extends StatelessWidget {
                             if (val.length < 4) {
                               return "Minium 4 characters required";
                             }
-                            if (val.length > 8) {
+                            if (val.length > 10) {
                               return "Maximum 8 characters allowed";
                             }
+                            if (controller.passwordController.text !=
+                                controller.confirmPasswordController.text) {
+                              return "Password didn't match";
+                            }
                           },
-                          controller: controller.passwordController,
-                          suffix: FaIcon(
-                            FontAwesomeIcons.eye,
-                            color: primaryGreen,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 25.h,
-                        ),
-                        Form(
-                          child: formField(
-                            "Confirm Password",
-                            validator: (val) {
-                              if (val == "") {
-                                return "This field is required";
-                              }
-                              if (val.length < 4) {
-                                return "Minium 4 characters required";
-                              }
-                              if (val.length > 8) {
-                                return "Maximum 8 characters allowed";
-                              }
-                            },
-                            controller: controller.confirmPasswordController,
-                            suffix: FaIcon(
-                              FontAwesomeIcons.eye,
-                              color: primaryGreen,
-                            ),
-                          ),
                         ),
                         SizedBox(
                           height: 25.h,
@@ -414,10 +443,89 @@ class RegisterCompany extends StatelessWidget {
                         ),
                         Center(
                           child: GestureDetector(
-                            onTap: () {
-                              
-                              if (formkey.currentState!.validate()&&controller.isChecked==true) {
-                                Get.to(const RegisterResult());
+                            onTap: () async {
+                              loading = true;
+                              controller.file ??
+                                  Get.snackbar(
+                                      "Logo didn't pick", "Registration Failed",
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      titleText: Text(
+                                        "Logo is not selected",
+                                        style: textStyle(
+                                          fullBlack,
+                                          19.sp,
+                                          FontWeight.w900,
+                                        ),
+                                      ),
+                                      messageText: Text(
+                                        "Please Select a logo to complete your registration",
+                                        style: textStyle(
+                                          textBlack,
+                                          18.sp,
+                                          FontWeight.w700,
+                                        ),
+                                      ));
+
+                              if (formkey.currentState!.validate() &&
+                                  controller.isChecked == true) {
+                                List<int> imageBytes =
+                                    controller.file!.readAsBytesSync();
+                                String base64Image = base64Encode(imageBytes);
+                                String fileExtension = controller.path
+                                    .split('/')
+                                    .last
+                                    .split('.')
+                                    .last;
+                                log(fileExtension);
+                                String companyName =
+                                    controller.companynameController.text;
+                                const String pathUrl =
+                                    "https://jobsway-company.herokuapp.com/api/v1/company/register";
+                                final datas = {
+                                  'companyDetails': {
+                                    'companyName': controller
+                                        .companynameController.text
+                                        .trim(),
+                                    'industry':
+                                        controller.industrieController.text,
+                                    'location':
+                                        controller.locationController.text,
+                                    'email':
+                                        controller.emailController.text.trim(),
+                                    'bio': controller.aboutController.text,
+                                    'phone':
+                                        controller.phoneController.text.trim(),
+                                    'website':
+                                        controller.webSiteController.text,
+                                    'linkedin':
+                                        controller.linkedInController.text,
+                                    'facebook':
+                                        controller.facebookController.text,
+                                    'instagram':
+                                        controller.instagramController.text,
+                                    'password': controller
+                                        .confirmPasswordController.text,
+                                  },
+                                  "image":
+                                      'data:image/$fileExtension;base64,$base64Image',
+                                };
+                                await apiServices
+                                    .postData(datas, pathUrl)
+                                    .whenComplete(() => controller
+                                        .conditionFunction(companyName));
+                                controller.companynameController.clear();
+                                controller.industrieController.clear();
+                                controller.locationController.clear();
+                                controller.emailController.clear();
+                                controller.phoneController.clear();
+                                controller.aboutController.clear();
+                                controller.webSiteController.clear();
+                                controller.linkedInController.clear();
+                                controller.facebookController.clear();
+                                controller.instagramController.clear();
+                                controller.passwordController.clear();
+                                controller.confirmPasswordController.clear();
+                                Get.off(const RegisterResult());
                               }
                               if (controller.isChecked == false) {
                                 Get.snackbar("Please ensure checkbutton",
@@ -426,14 +534,16 @@ class RegisterCompany extends StatelessWidget {
                             },
                             child: Container(
                               alignment: Alignment.center,
-                              child: Text(
-                                'Register Company ',
-                                style: textStyle(
-                                  pureWhite,
-                                  20.sp,
-                                  FontWeight.w600,
-                                ),
-                              ),
+                              child: loading == false
+                                  ? Text(
+                                      'Register Company ',
+                                      style: textStyle(
+                                        pureWhite,
+                                        20.sp,
+                                        FontWeight.w600,
+                                      ),
+                                    )
+                                  : const CircularProgressIndicator(),
                               width: 260.w,
                               height: 58.h,
                               decoration: BoxDecoration(
