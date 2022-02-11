@@ -74,7 +74,7 @@ class RegisterResult extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () async {
                         Get.to(
-                          () => const LoginPage(),
+                          () =>  LoginPage(),
                         );
                       },
                       child: Container(

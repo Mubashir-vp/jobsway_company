@@ -1,13 +1,59 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jobswaycompany/constants/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-enum Time { FullTime, Parttime }
-Time? _character = Time.FullTime;
+import 'login_controller.dart';
+
+enum Time { FULLTIME, PARTTIME }
+Time? character = Time.FULLTIME;
 
 class addnewJobController extends GetxController {
+  @override
+  void onInit() async {
+    // TODO: implement onInit
+    super.onInit();
+    var loginController = Get.put(LoginController());
+    companyData = loginController.datasFetching();
+    hrData = loginController.hrfetching();
+    sharedPreference = await SharedPreferences.getInstance();
+  }
+
+  var sharedPreference;
+  var sharedJobid;
+  var sharedHrid;
+  var sharedPlanList;
+  var sharedJobname;
+  datasForplanSelection({
+    var hrId,
+    var jobId,
+    var jobName
+  }) async {
+    final List<String> map = [
+      sharedHrid = hrId,
+      sharedJobid = jobId,
+      sharedJobname=jobName
+    ];
+
+    final sharedPreference = await SharedPreferences.getInstance();
+    sharedPreference.setStringList("sharedPlanList", map);
+  }
+
+  List<String> datasFetchingforPlan() {
+    var result = sharedPreference.getStringList("sharedPlanList");
+    log(result![0]);
+    return result;
+  }
+
+  late List<String> companyData;
+  late List<String> hrData;
+
   int count = 1;
   int cardCount = 1;
+  Time? time = Time.FULLTIME;
   addButton() {
     return IconButton(
       onPressed: () {
@@ -36,16 +82,18 @@ class addnewJobController extends GetxController {
     return Column(
       children: [
         ListTile(
-          title: const Text('Fulltime',),
+          title: const Text(
+            'Fulltime',
+          ),
           leading: Radio<Time>(
-                        activeColor: primaryGreen,
-
-            value: Time.FullTime,
-            groupValue: _character,
+            activeColor: primaryGreen,
+            value: Time.FULLTIME,
+            groupValue: character,
             onChanged: (
               Time? value,
             ) {
-              _character = value;
+              time = value;
+              character = value;
               update();
             },
           ),
@@ -56,17 +104,35 @@ class addnewJobController extends GetxController {
           ),
           leading: Radio<Time>(
             activeColor: primaryGreen,
-            value: Time.Parttime,
-            groupValue: _character,
+            value: Time.PARTTIME,
+            groupValue: character,
             onChanged: (
               Time? value,
             ) {
+              time = value;
               update();
-              _character = value;
+              character = value;
             },
           ),
         ),
       ],
     );
   }
+
+  // growableLongCard() {
+  //   return Row(
+  //     children: [
+  //       formField(
+  //         "",
+  //         false,
+  //         TextInputType.name,
+  //         controller: qualificationController,
+  //         width: 200.w,
+  //       ),
+  //       SizedBox(
+  //         width: 10.w,
+  //       )
+  //     ],
+  //   );
+  // }
 }

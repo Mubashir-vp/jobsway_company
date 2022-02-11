@@ -16,6 +16,7 @@ class SplashScreenController extends GetxController {
         const Duration(
           seconds: 2,
         ), () {
+      controller.isComponyOrnot();
       controller.logedChecking();
     });
   }

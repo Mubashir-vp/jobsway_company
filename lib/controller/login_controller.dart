@@ -1,10 +1,12 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jobswaycompany/constants/constants.dart';
-import 'package:jobswaycompany/model/postModel/companyLogin_model.dart';
+import 'package:jobswaycompany/controller/dash_controller.dart';
 import 'package:jobswaycompany/view/landingPage.dart';
 import 'package:jobswaycompany/view/loginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,9 +15,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const sharedVal = "true";
 bool? isCompany = true;
+var isLoggedIn = "false";
+bool? isLogged;
 
 class LoginController extends GetxController {
-  bool company = true;
+  bool? company;
   bool eyesOpen = true;
   var isLoggedIn = "false";
   bool? isLogged;
@@ -27,6 +31,7 @@ class LoginController extends GetxController {
   var sharedLogo;
   var sharedBio;
   var sharedemail;
+  var sharedId;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -34,11 +39,12 @@ class LoginController extends GetxController {
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
-    conditionFunction(company);
-   sharedPreference = await SharedPreferences.getInstance();
+    sharedPreference = await SharedPreferences.getInstance();
   }
 
   var sharedPreference;
+  var sharedHrList;
+
 
   conditionFunction(bool value) async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +61,8 @@ class LoginController extends GetxController {
       var phone,
       var logo,
       var bio,
-      var email}) async {
+      var email,
+      var id}) async {
     final List<String> map = [
       sharedCompanyname = companyName,
       sharedindustrie = industrie,
@@ -63,16 +70,17 @@ class LoginController extends GetxController {
       sharedPhone = phone,
       sharedLogo = logo,
       sharedBio = bio,
-      sharedemail = email
+      sharedemail = email,
+      sharedId = id
     ];
 
     final sharedPreference = await SharedPreferences.getInstance();
     sharedPreference.setStringList("sharedList", map);
+    update();
   }
 
   List<String> datasFetching() {
     var result = sharedPreference.getStringList("sharedList");
-    log(result![3]);
     return result;
   }
 
@@ -93,10 +101,16 @@ class LoginController extends GetxController {
     if (isLogged == true) {
       Get.to(() => const LandingPage());
     } else {
-      Get.to(() => const LoginPage());
+      Get.to(() => LoginPage());
     }
-    log(isLogged.toString());
     update();
+    update();
+  }
+
+  isComponyOrnot() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final sharedPreference = await SharedPreferences.getInstance();
+    isCompany = sharedPreference.getBool(sharedVal);
   }
 
   selectionButton() {
@@ -106,8 +120,7 @@ class LoginController extends GetxController {
         GestureDetector(
           onTap: () {
             company = true;
-            conditionFunction(company);
-            print(company);
+            conditionFunction(company!);
             update();
           },
           child: Container(
@@ -134,7 +147,7 @@ class LoginController extends GetxController {
         GestureDetector(
           onTap: () {
             company = false;
-            conditionFunction(company);
+            conditionFunction(company!);
             update();
           },
           child: Container(
@@ -180,5 +193,54 @@ class LoginController extends GetxController {
     );
   }
 
-  navigation(response) {}
+  var sharedHrname;
+  var hrname;
+  hrNameSaver({
+    var hrname,
+  }) async {
+    final sharedPreference = await SharedPreferences.getInstance();
+    sharedPreference.setString("sharedHrname", hrname);
+    update();
+  }
+
+  var sharedHrId;
+
+  hrFullData({
+    var name,
+    var hrid,
+  }) async {
+    final List<String> map = [
+      sharedHrId = hrid,
+      sharedHrname = name,
+    ];
+
+    final sharedPreference = await SharedPreferences.getInstance();
+    sharedPreference.setStringList("sharedHrList", map);
+    update();
+  }
+
+  List<String> hrfetching() {
+
+    var result = sharedPreference.getStringList("sharedHrList");
+    log("Hereeeeeeeeee$result");
+
+    return result;
+  }
+
+  sharedPreferenceEmpty() {
+    hrFullData(hrid: "", name: "");
+    hrNameSaver(hrname: "");
+    update();
+  }
+
+  Future refreshingSharedPreference(
+      {required var id, required var name}) async {
+    hrNameSaver(hrname: name);
+    hrFullData(
+      hrid: id,
+      name: name,
+    );
+    var hrData = hrfetching();
+    update();
+  }
 }

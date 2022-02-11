@@ -5,11 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jobswaycompany/controller/registercompany_controller.dart';
-import 'package:jobswaycompany/controller/taskCreation_controller.dart';
 import 'package:jobswaycompany/view/addNewJob.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+
 
 final registerController = Get.put(RegisterCompanyController());
 final primaryGreen = HexColor("#008FAE");
@@ -83,7 +80,56 @@ formField(
     ),
   );
 }
-
+addJobField(
+  var hint, 
+   var obsecure,
+  var keyboardtype,{
+  var suffix,
+  var width,
+  var height,
+  padding,
+  var controller,
+  var validator,
+ 
+}) {
+  return SizedBox(
+    width: width,
+    height: height,
+    child: TextFormField
+    (
+      keyboardType:keyboardtype ,
+      textInputAction:TextInputAction.next,
+      obscureText: obsecure,
+      validator: validator,
+      controller: controller,
+      decoration: InputDecoration(
+        suffixIcon: Padding(
+          padding: EdgeInsets.only(top: 15.h),
+          child: suffix,
+        ),
+        contentPadding: padding,
+        filled: true,
+        fillColor: HexColor(
+          "#E5E4E4",
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(
+            10.r,
+          ),
+        ),
+        hintText: hint,
+        hintStyle: textStyle(
+          HexColor(
+            "0B0A0A",
+          ),
+          11.sp,
+          FontWeight.normal,
+        ),
+      ),
+    ),
+  );
+}
 searchformField(var hint, [var width]) {
   return SizedBox(
     width: 407.w,
@@ -161,9 +207,11 @@ growableLongCard() {
       formField(
         "",
         false,
-                TextInputType.name,
+      TextInputType.name,
+      
 
         width: 200.w,
+        
       ),
       SizedBox(
         width: 10.w,
@@ -782,174 +830,7 @@ companyJobs() {
   );
 }
 
-planCard({
-  var plan,
-  bool? basic,
-  var rate,
-  var jobShowDay,
-  var jobCount,
-  bool? free,
-}) {
-  return Container(
-    height: 293.h,
-    width: 268.w,
-    decoration: BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(
-            0.8,
-          ),
-          spreadRadius: 3,
-          blurRadius: 11, blurStyle: BlurStyle.normal,
-          offset: const Offset(
-            0,
-            5,
-          ), //
-        ),
-      ],
-      color: free == true
-          ? pureWhite
-          : HexColor(
-              "#0A0047",
-            ),
-      borderRadius: BorderRadius.circular(
-        10.r,
-      ),
-    ),
-    child: Column(
-      children: [
-        SizedBox(
-          height: 15.h,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 13.w),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(
-              plan,
-              style: textStyle(
-                free == true ? textBlack : pureWhite,
-                20.sp,
-                FontWeight.w600,
-              ),
-            ),
-            basic == true
-                ? Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Popular',
-                      style: textStyle(
-                        pureWhite,
-                        14.sp,
-                        FontWeight.w500,
-                      ),
-                    ),
-                    width: 73.w,
-                    height: 25.h,
-                    decoration: BoxDecoration(
-                      color: HexColor("#00B512"),
-                      borderRadius: BorderRadius.circular(
-                        4.r,
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
-          ]),
-        ),
-        SizedBox(
-          height: 22.h,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 13.w),
-          child: Center(
-            child: Wrap(
-              children: [
-                Text(
-                  "\$ $rate",
-                  style: textStyle(
-                    free == true ? textBlack : pureWhite,
-                    46.sp,
-                    FontWeight.bold,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 30.0.h,
-                  ),
-                  child: Text(
-                    "  /Job",
-                    style: textStyle(
-                      free == true ? textBlack : HexColor("#B0B0B0"),
-                      15.sp,
-                      FontWeight.w300,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 18.h,
-        ),
-        Center(
-          child: Text(
-            "Job Show for $jobShowDay Days",
-            style: textStyle(
-              free == true ? textBlack : pureWhite,
-              14.sp,
-              FontWeight.w400,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 14.h,
-        ),
-        Center(
-          child: Text(
-            jobCount,
-            style: textStyle(
-              free == true ? HexColor("#C30101") : pureWhite,
-              14.sp,
-              FontWeight.w200,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 13.h,
-        ),
-        GestureDetector(
-          // onTap: ()=>Get.to(()=>const Home()),
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(
-              'Select Plan',
-              style: textStyle(
-                pureWhite,
-                20.sp,
-                FontWeight.w800,
-              ),
-            ),
-            width: 293.w,
-            height: 58.h,
-            decoration: BoxDecoration(
-                color: HexColor(
-                  "#5B40FF",
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(
-                    10.r,
-                  ),
-                  bottomRight: Radius.circular(
-                    10.r,
-                  ),
-                )),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+
 
 applicantsCard() {
   return Container(
@@ -1254,7 +1135,7 @@ shortlistCard() {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => Get.to(() => const AddNewJob()),
+                        onTap: () => Get.to(() =>  AddNewJob()),
                         child: Container(
                           alignment: Alignment.center,
                           child: Center(
@@ -1409,4 +1290,9 @@ growableTaskCard() {
       )
     ],
   );
+}
+
+class AlwaysDisabledFocusNode extends FocusNode {
+  @override
+  bool get hasFocus => false;
 }

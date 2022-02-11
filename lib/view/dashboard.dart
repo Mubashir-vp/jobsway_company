@@ -6,17 +6,14 @@ import 'package:jobswaycompany/constants/constants.dart';
 import 'package:jobswaycompany/controller/dash_controller.dart';
 import 'package:jobswaycompany/controller/login_controller.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:jobswaycompany/view/drawer.dart';
 import 'package:get/get.dart';
+import 'package:jobswaycompany/view/loginPage.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var loginController = Get.put(LoginController());
-  List<String> result = loginController.datasFetching();
-    log(result[0]);
     return SafeArea(
       child: Scaffold(
         body: GetBuilder<DashBoardController>(
@@ -43,7 +40,7 @@ class Dashboard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          isCompany == true ? controller.result[0] : " Mubashir",
+                          isCompany == true ? controller.result[0] : controller.hrData[1],
                           style: textStyle(
                             primaryGreen,
                             38.sp,

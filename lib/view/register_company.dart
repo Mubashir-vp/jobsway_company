@@ -11,6 +11,7 @@ import 'package:jobswaycompany/controller/login_controller.dart';
 import 'package:jobswaycompany/controller/registercompany_controller.dart';
 import 'package:email_validator/email_validator.dart';
 import 'dart:convert';
+import 'package:carousel_slider/carousel_slider.dart';
 
 import 'registerResult.dart';
 
@@ -117,7 +118,8 @@ class RegisterCompany extends StatelessWidget {
                                 }
                               },
                               controller: controller.industrieController,
-                            ))
+                            ),
+                            )
                           ],
                         ),
                         SizedBox(
@@ -187,8 +189,8 @@ class RegisterCompany extends StatelessWidget {
                             if (val == "") {
                               return "This field is required";
                             }
-                            if (val.length < 21) {
-                              return "Length minimum 20 required";
+                            if (val.length < 30) {
+                              return "Length minimum 30 required";
                             }
                           },
                           controller: controller.aboutController,
@@ -468,6 +470,12 @@ class RegisterCompany extends StatelessWidget {
 
                               if (formkey.currentState!.validate() &&
                                   controller.isChecked == true) {
+                                FocusScopeNode currentFocus =
+                                    FocusScope.of(context);
+
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
                                 List<int> imageBytes =
                                     controller.file!.readAsBytesSync();
                                 String base64Image = base64Encode(imageBytes);
